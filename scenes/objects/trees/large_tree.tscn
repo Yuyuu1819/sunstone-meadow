@@ -1,0 +1,49 @@
+[gd_scene load_steps=11 format=3 uid="uid://b0dmqexh0w418"]
+
+[ext_resource type="Shader" uid="uid://dcy430p0c71fg" path="res://scenes/objects/trees/tree_shake.gdshader" id="1_6vpey"]
+[ext_resource type="Texture2D" uid="uid://dwygn3j8upw2r" path="res://assets/game/objects/basic_grass_biom_things.png" id="1_ivetc"]
+[ext_resource type="Script" uid="uid://c3dwmmyfel805" path="res://scenes/objects/trees/large_tree.gd" id="2_f4wgc"]
+[ext_resource type="Script" uid="uid://c2ayefy5hi1bs" path="res://scenes/components/damage_component.gd" id="3_f4wgc"]
+[ext_resource type="PackedScene" uid="uid://dp4hce2tlfbsr" path="res://scenes/components/hurt_component.tscn" id="3_wjqkr"]
+[ext_resource type="PackedScene" uid="uid://cheg4eydufhjm" path="res://scenes/components/damage_component.tscn" id="4_f4wgc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0ia52"]
+resource_local_to_scene = true
+shader = ExtResource("1_6vpey")
+shader_parameter/shake_intensity = 0.0
+shader_parameter/shake_speed = 20.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vpey"]
+atlas = ExtResource("1_ivetc")
+region = Rect2(16, 0, 32, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0ia52"]
+radius = 6.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6vpey"]
+size = Vector2(16, 26)
+
+[node name="LargeTree" type="Sprite2D"]
+material = SubResource("ShaderMaterial_0ia52")
+position = Vector2(0, -12)
+texture = SubResource("AtlasTexture_6vpey")
+script = ExtResource("2_f4wgc")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(0, 9)
+shape = SubResource("CircleShape2D_0ia52")
+
+[node name="HurtComponent" parent="." instance=ExtResource("3_wjqkr")]
+tool = 1
+
+[node name="HurtComponentCollisionShape2D" type="CollisionShape2D" parent="HurtComponent"]
+shape = SubResource("RectangleShape2D_6vpey")
+debug_color = Color(0.81770694, 0.38035166, 0.38257015, 0.41960785)
+script = ExtResource("3_f4wgc")
+
+[node name="DamageComponent" parent="." instance=ExtResource("4_f4wgc")]
+max_damage = 4
+
+[connection signal="max_damaged_reached" from="DamageComponent" to="." method="_on_max_damaged_reached"]
